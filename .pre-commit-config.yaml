@@ -1,0 +1,39 @@
+# Pre-commit hooks for this module.
+#
+# Hooks run `terraform` by default. To run them against OpenTofu instead, export:
+#   export PCT_TFPATH=$(command -v tofu)
+#
+# Install:  pre-commit install
+# Run all:  pre-commit run --all-files
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.108.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+      - id: terraform_validate
+      - id: terraform_trivy # Replaces the deprecated terraform_tfsec hook
+      - id: terraform_checkov
+      - id: terraform_docs
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+      - id: pretty-format-json
+        args:
+          - "--autofix"
+      - id: check-yaml
+      - id: check-symlinks
+      - id: check-added-large-files
+        args: ["--maxkb=3000"]
+      - id: detect-aws-credentials
+        args:
+          - "--allow-missing-credentials"
+      - id: detect-private-key
+      - id: no-commit-to-branch
+      - id: forbid-submodules
+      - id: check-vcs-permalinks
