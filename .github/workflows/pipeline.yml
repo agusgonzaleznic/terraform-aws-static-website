@@ -1,0 +1,105 @@
+name: Terraform / OpenTofu
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Latest stable releases. Bumped automatically by Renovate/Dependabot.
+  TERRAFORM_VERSION: "1.15.7"
+  TOFU_VERSION: "1.12.3"
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: localstack
+  AWS_SECRET_ACCESS_KEY: localstack
+
+jobs:
+  check-format:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Format check (canonical across Terraform & OpenTofu)
+        run: terraform fmt -check -recursive -diff
+
+  validations:
+    name: ${{ matrix.tool }} · ${{ matrix.dir }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: [terraform, tofu]
+        dir:
+          - 'examples/complete'
+          - 'examples/no-cert'
+          - 'examples/no-cert-no-hosted-zone'
+          - 'examples/no-hosted-zone'
+          - 'examples/ordered-cache-behavior'
+    services:
+      localstack:
+        # Pin to a specific community-edition tag. The `latest` tag now requires a
+        # LocalStack Pro auth token and exits without one; version-pinned community
+        # images run token-free.
+        image: localstack/localstack:4.5.0
+        env:
+          SERVICES: sts,s3,iam,route53
+        ports:
+          - 4566:4566
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        if: matrix.tool == 'terraform'
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Setup OpenTofu
+        if: matrix.tool == 'tofu'
+        uses: opentofu/setup-opentofu@v2
+        with:
+          tofu_version: ${{ env.TOFU_VERSION }}
+          tofu_wrapper: false
+
+      - name: Wait for LocalStack
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4566/_localstack/health >/dev/null; then
+              echo "LocalStack is ready"; exit 0
+            fi
+            echo "Waiting for LocalStack... ($i)"; sleep 5
+          done
+          echo "LocalStack did not become ready in time" >&2; exit 1
+
+      - name: Init
+        run: ${{ matrix.tool }} init -upgrade
+        working-directory: ${{ matrix.dir }}
+
+      - name: Validate
+        run: ${{ matrix.tool }} validate
+        working-directory: ${{ matrix.dir }}
+
+      - name: Plan (mock, against LocalStack)
+        run: ${{ matrix.tool }} plan -input=false
+        working-directory: ${{ matrix.dir }}
