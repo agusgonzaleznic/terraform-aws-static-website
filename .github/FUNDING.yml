@@ -1,12 +1,18 @@
-# These are supported funding model platforms
+# Funding sources shown in the "Sponsor" button on the repository page.
+#
+# These keys take a bare username, not a full URL:
+#     ko_fi: <username> → https://ko-fi.com/<username>
+#
+# Docs: https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
 
-github: # Replace with up to 4 GitHub Sponsors-enabled usernames e.g., [user1, user2]
-patreon: 
-open_collective: # Replace with a single Open Collective username
-ko_fi: # Replace with a single Ko-fi username
-tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
-community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
-liberapay: # Replace with a single Liberapay username
-issuehunt: # Replace with a single IssueHunt username
-otechie: # Replace with a single Otechie username
-custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# Monthly or one-time, custom amounts.
+github: [agusgonzaleznic]
+
+# One-off: https://ko-fi.com/agusgonzaleznic
+#
+# A note for anyone checking this link: Ko-fi sits behind Cloudflare and answers
+# automated requests with a challenge page, so curl reports HTTP 403 for every
+# Ko-fi URL, real or invented. Verify it in a browser. A 403 proves nothing.
+ko_fi: agusgonzaleznic
+
+custom: ["https://agusgonzaleznic.com"]
