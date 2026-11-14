@@ -42,7 +42,7 @@ The module doesn't upload your site. It builds the place the files go.
 |---|---|---|
 | Terraform | `>= 1.6` | 1.15.7 |
 | OpenTofu | `>= 1.6` | 1.12.3 |
-| AWS provider | `>= 5.30` | the newest version that constraint allows (6.64.0 in the last run on `main`, 16 September 2026) |
+| AWS provider | `>= 5.30` | the newest version that constraint allows (6.64.0 in the run on `main` on 16 September 2026) |
 
 CI tests one Terraform version and one OpenTofu version, so older ones in the supported range are
 not tested.
@@ -344,7 +344,7 @@ SHAs.
 | Format check | `terraform fmt -check -recursive -diff` |
 | `terraform` and `tofu`, once for each of the five examples (10 jobs) | `init -upgrade`, `validate` and `plan -input=false` in the example directory, against LocalStack 4.5.0 (`sts`, `s3`, `iam` and `route53`) |
 
-The last run on `main` (16 September 2026, commit `866ca0e`) passed all 11 jobs.
+The run on `main` on 16 September 2026 (commit `866ca0e`) passed all 11 jobs.
 
 It never applies anything, so nothing is created in an AWS account, and no job runs `tflint`, Trivy
 or Checkov. Those three run in the local hooks below. GitHub's default CodeQL setup is on as well,
