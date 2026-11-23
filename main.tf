@@ -19,7 +19,7 @@ module "logs_bucket" {
   # dependency resolves identically under both Terraform and OpenTofu. The module
   # is published to the Terraform registry but not the OpenTofu registry, so a
   # `agusgonzaleznic/s3-bucket/aws` reference fails under `tofu init`.
-  source = "github.com/agusgonzaleznic/terraform-aws-s3-bucket?ref=1.0.0"
+  source = "github.com/agusgonzaleznic/terraform-aws-s3-bucket?ref=v1.1.0"
   # source = "../terraform-aws-s3-bucket"
 
   name_prefix                   = "${var.name_prefix}-log-bucket"
