@@ -49,7 +49,7 @@ not tested.
 
 The `logs_bucket` dependency
 ([`terraform-aws-s3-bucket`](https://github.com/agusgonzaleznic/terraform-aws-s3-bucket)) comes in
-through a git source pinned to the tag `1.0.0`, not a registry address, so it resolves the same
+through a git source pinned to the tag `v1.1.0`, not a registry address, so it resolves the same
 under Terraform and OpenTofu.
 
 ---
@@ -161,7 +161,7 @@ These are the resources, named as the code declares them.
 | `aws_s3_bucket_server_side_encryption_configuration.website_bucket_website_server_side_encryption_configuration` | Default encryption from `website_server_side_encryption_configuration` | only when that input isn't empty |
 | `aws_cloudfront_origin_access_identity.cf_oai` | The identity CloudFront reads the bucket with | always |
 | `aws_cloudfront_distribution.website` | The distribution: your domain as an alias (plus `www.<domain>` when `www_website_redirect_enabled`, which is on by default), TLS `TLSv1.2_2021` over SNI, access logs to the logs bucket under `cloudfront_website`, the default behaviour on the managed policies the code comments call Managed-CachingOptimized and Managed-CORS-S3Origin | always |
-| `module.logs_bucket` | The access log bucket, named from `name_prefix`, public access blocked, built by [`terraform-aws-s3-bucket`](https://github.com/agusgonzaleznic/terraform-aws-s3-bucket) at the tag `1.0.0` | always |
+| `module.logs_bucket` | The access log bucket, named from `name_prefix`, public access blocked, built by [`terraform-aws-s3-bucket`](https://github.com/agusgonzaleznic/terraform-aws-s3-bucket) at the tag `v1.1.0` | always |
 | `aws_route53_zone.hosted_zone` | The hosted zone for `website_domain_name` | when `create_route53_hosted_zone` |
 | `aws_acm_certificate.cert` | A DNS-validated certificate for `*.<domain>` with the bare domain as an alternative name | when `create_acm_certificate` |
 | `aws_route53_record.acm_certificate_validation_records` | The validation records, in the created zone or in `route53_hosted_zone_id` | when `create_acm_certificate` |
@@ -212,7 +212,7 @@ outputs here are the ones in `variables.tf` and `outputs.tf`.
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_logs_bucket"></a> [logs\_bucket](#module\_logs\_bucket) | github.com/agusgonzaleznic/terraform-aws-s3-bucket | 1.0.0 |
+| <a name="module_logs_bucket"></a> [logs\_bucket](#module\_logs\_bucket) | github.com/agusgonzaleznic/terraform-aws-s3-bucket | v1.1.0 |
 
 ## Resources
 
@@ -390,7 +390,7 @@ against OpenTofu, export `PCT_TFPATH=$(command -v tofu)` first.
 | It doesn't create a web ACL | `cloudfront_web_acl_id` takes the ID of one you already have. |
 | It doesn't expose the default cache policies | The default behaviour uses fixed managed policies (a TODO in `website.tf`). |
 | It leaves several features out | Lifecycle rules, replication and object lock on the bucket, origin groups, origin shield, trusted key groups and trusted signers, and Lambda@Edge and function associations on ordered cache behaviours (TODO comments in `website.tf` and `variables.tf`). |
-| One input grants write, not read | `aws_accounts_with_read_view_log_bucket` passes its accounts to the logs bucket module, which grants them `s3:PutObject` on the logs bucket (terraform-aws-s3-bucket 1.0.0). Left empty, the grant goes to your own account. |
+| One input grants write, not read | `aws_accounts_with_read_view_log_bucket` passes its accounts to the logs bucket module, which grants them `s3:PutObject` on the logs bucket (terraform-aws-s3-bucket v1.1.0). Left empty, the grant goes to your own account. |
 | It encrypts the bucket only when you ask | Without `website_server_side_encryption_configuration`, the module creates no encryption configuration. |
 | Eight inputs do nothing | The module code never reads `log_bucket_versioning_status`, `log_bucket_versioning_mfa_delete`, `website_index_document`, `website_error_document`, `www_website_bucket_acl`, `www_website_bucket_force_destroy`, `www_website_versioning_enabled` and `www_website_versioning_mfa_delete` (checked on `main` on 14 November 2026). |
 
